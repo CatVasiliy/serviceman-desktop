@@ -21,11 +21,26 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+
+    // Koin Dependency Injection
+    implementation(libs.koin.core)
+
+    // Ktor Client Core
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+
+    // Ktor Client Serialization
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx)
+
+    // Ktor Client Logging
+    implementation(libs.ktor.client.logging)
+    implementation(libs.logback.classic)
 }
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.catvasiliy.presentation.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
