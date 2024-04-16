@@ -22,8 +22,14 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
 
+    // Kotlin Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.swing)
+
     // Koin Dependency Injection
+    implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
+    implementation(libs.koin.compose)
 
     // Ktor Client Core
     implementation(libs.ktor.client.core)

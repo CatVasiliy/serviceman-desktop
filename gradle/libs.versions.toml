@@ -1,6 +1,7 @@
 [versions]
 
 kotlin = "1.9.23"
+kotlin-coroutines = "1.8.0"
 compose = "1.6.2"
 koin = "3.5.6"
 ktor = "2.3.10"
@@ -8,8 +9,14 @@ logback = "1.5.5"
 
 [libraries]
 
+# Kotlin Coroutines
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlin-coroutines" }
+
 # Koin Depandency Injection
-koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-compose = { group = "io.insert-koin", name = "koin-compose" }
 
 # Ktor Client Core
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
