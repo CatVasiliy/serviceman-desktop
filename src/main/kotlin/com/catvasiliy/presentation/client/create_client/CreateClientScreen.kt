@@ -1,5 +1,6 @@
 package com.catvasiliy.presentation.client.create_client
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -16,6 +17,15 @@ import org.koin.compose.koinInject
 fun CreateClientScreen() {
     val viewModel = koinInject<CreateClientViewModel>()
 
+    CreateClientScreenContent(
+        onCreateClient = viewModel::createClient
+    )
+}
+
+@Composable
+fun CreateClientScreenContent(
+    onCreateClient: (String, String, String?, String, String) -> Unit
+) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var patronymic by remember { mutableStateOf("") }
@@ -70,12 +80,12 @@ fun CreateClientScreen() {
         Spacer(modifier = Modifier.size(16.dp))
         Button(
             onClick = {
-                viewModel.createClient(
-                    firstName = firstName,
-                    lastName = lastName,
-                    patronymic = if (patronymic.isNotBlank()) patronymic else null,
-                    address = address,
-                    phoneNumber = phoneNumber
+                onCreateClient(
+                    firstName,
+                    lastName,
+                    patronymic.ifBlank { null },
+                    address,
+                    phoneNumber
                 )
             }
         ) {
@@ -85,4 +95,12 @@ fun CreateClientScreen() {
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun CreateClientScreenPreview() {
+    CreateClientScreenContent(
+        onCreateClient = { _, _, _, _, _ -> }
+    )
 }

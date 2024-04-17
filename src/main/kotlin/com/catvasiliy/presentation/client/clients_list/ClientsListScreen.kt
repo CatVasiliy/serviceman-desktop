@@ -1,15 +1,17 @@
 package com.catvasiliy.presentation.client.clients_list
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,33 +22,52 @@ import org.koin.compose.koinInject
 @Composable
 fun ClientsListScreen() {
     val viewModel = koinInject<ClientsListViewModel>()
-    val clientsListState = viewModel.state.collectAsState()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    val clientsListState by viewModel.state.collectAsState()
+
+    ClientsListScreenContent(
+        state = clientsListState,
+        onRefresh = viewModel::getClientsList
+    )
+}
+
+@Composable
+fun ClientsListScreenContent(
+    state: List<Client>,
+    onRefresh: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
-        val lazyColumnState = rememberLazyListState()
-        LazyColumn(
-            state = lazyColumnState,
-            modifier = Modifier
-                .fillMaxSize()
+        Box(
+            modifier = Modifier.weight(1f)
         ) {
-            items(clientsListState.value) { client ->
-                ClientListItem(client)
+            val lazyColumnState = rememberLazyListState()
+            LazyColumn(
+                state = lazyColumnState,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .fillMaxSize()
+            ) {
+                items(state) { client ->
+                    ClientListItem(client)
+                }
             }
+            VerticalScrollbar(
+                adapter = rememberScrollbarAdapter(lazyColumnState),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+            )
         }
-        VerticalScrollbar(
-            adapter = rememberScrollbarAdapter(lazyColumnState),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight()
-        )
-        ExtendedFloatingActionButton(
-            text = { Text(text = "Refresh Clients") },
-            onClick = { viewModel.getClientsList() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-        )
+        Button(
+            onClick = onRefresh
+        ) {
+            Text(
+                text = "Refresh Clients",
+                fontSize = 32.sp
+            )
+        }
     }
 }
 
@@ -74,4 +95,27 @@ fun ClientListItem(client: Client) {
             fontSize = 32.sp
         )
     }
+}
+
+@Preview
+@Composable
+fun ClientsListScreenPreview() {
+    val client = Client(
+        firstName = "Penultan",
+        lastName = "Minsiron",
+        patronymic = "Henober",
+        address = "Orapionas, 25",
+        phoneNumber = "5893467695"
+    )
+
+    val clientsList = buildList {
+        repeat(20) {
+            add(client)
+        }
+    }
+
+    ClientsListScreenContent(
+        state = clientsList,
+        onRefresh = {  }
+    )
 }
