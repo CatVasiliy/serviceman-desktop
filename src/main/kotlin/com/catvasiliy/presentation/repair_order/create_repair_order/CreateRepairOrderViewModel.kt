@@ -1,6 +1,6 @@
 package com.catvasiliy.presentation.repair_order.create_repair_order
 
-import com.catvasiliy.domain.model.RepairOrder
+import com.catvasiliy.domain.model.repair_order.NewRepairOrder
 import com.catvasiliy.domain.repository.RepairOrderRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ class CreateRepairOrderViewModel(private val repository: RepairOrderRepository) 
         faultDescription: String,
         clientId: Int
     ) {
-        val repairOrder = RepairOrder(
+        val repairOrder = NewRepairOrder(
             faultDescription = faultDescription,
             clientId = clientId
         )

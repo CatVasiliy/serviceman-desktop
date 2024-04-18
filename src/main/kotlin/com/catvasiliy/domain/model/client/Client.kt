@@ -1,4 +1,4 @@
-package com.catvasiliy.domain.model
+package com.catvasiliy.domain.model.client
 
 import kotlinx.serialization.Serializable
 

@@ -1,6 +1,7 @@
 package com.catvasiliy.data
 
-import com.catvasiliy.domain.model.Client
+import com.catvasiliy.domain.model.client.Client
+import com.catvasiliy.domain.model.client.NewClient
 import com.catvasiliy.domain.repository.ClientRepository
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -19,7 +20,7 @@ class ClientRepositoryImpl(private val httpClient: HttpClient) : ClientRepositor
         httpClient.get("clients/$id").body<Client>()
     }
 
-    override suspend fun createClient(client: Client): Unit = withContext(Dispatchers.IO) {
+    override suspend fun createClient(client: NewClient): Unit = withContext(Dispatchers.IO) {
         httpClient.post("clients") {
             contentType(ContentType.Application.Json)
             setBody(client)

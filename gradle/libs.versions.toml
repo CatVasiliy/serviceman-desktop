@@ -3,6 +3,7 @@
 kotlin = "1.9.23"
 kotlin-coroutines = "1.8.0"
 compose = "1.6.2"
+voyager = "1.0.0"
 koin = "3.5.6"
 ktor = "2.3.10"
 logback = "1.5.5"
@@ -12,6 +13,12 @@ logback = "1.5.5"
 # Kotlin Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlin-coroutines" }
+
+# Voyager Navigation
+voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
+voyager-tab-navigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
+voyager-screenmodel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }
+voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyager" }
 
 # Koin Depandency Injection
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }

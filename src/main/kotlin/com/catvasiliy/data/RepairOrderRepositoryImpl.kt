@@ -1,6 +1,7 @@
 package com.catvasiliy.data
 
-import com.catvasiliy.domain.model.RepairOrder
+import com.catvasiliy.domain.model.repair_order.NewRepairOrder
+import com.catvasiliy.domain.model.repair_order.RepairOrder
 import com.catvasiliy.domain.repository.RepairOrderRepository
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,7 +22,7 @@ class RepairOrderRepositoryImpl(private val httpClient: HttpClient) : RepairOrde
         httpClient.get("$ENDPOINT/$id").body<RepairOrder>()
     }
 
-    override suspend fun createRepairOrder(repairOrder: RepairOrder): Unit = withContext(Dispatchers.IO) {
+    override suspend fun createRepairOrder(repairOrder: NewRepairOrder): Unit = withContext(Dispatchers.IO) {
         httpClient.post(ENDPOINT) {
             contentType(ContentType.Application.Json)
             setBody(repairOrder)

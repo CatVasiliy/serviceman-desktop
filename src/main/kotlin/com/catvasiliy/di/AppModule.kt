@@ -4,10 +4,12 @@ import com.catvasiliy.data.ClientRepositoryImpl
 import com.catvasiliy.data.RepairOrderRepositoryImpl
 import com.catvasiliy.domain.repository.ClientRepository
 import com.catvasiliy.domain.repository.RepairOrderRepository
-import com.catvasiliy.presentation.client.clients_list.ClientsListViewModel
+import com.catvasiliy.presentation.client.client_details.ClientDetailsScreenModel
+import com.catvasiliy.presentation.client.clients_list.ClientsListScreenModel
 import com.catvasiliy.presentation.client.create_client.CreateClientViewModel
 import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderViewModel
-import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListViewModel
+import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsScreenModel
+import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListScreenModel
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -31,10 +33,12 @@ val appModule = module {
     }
 
     single<RepairOrderRepository> { RepairOrderRepositoryImpl(get()) }
-    single { RepairOrdersListViewModel(get()) }
+    single { RepairOrdersListScreenModel(get()) }
+    factory { RepairOrderDetailsScreenModel(get()) }
     single { CreateRepairOrderViewModel(get()) }
 
     single<ClientRepository> { ClientRepositoryImpl(get()) }
-    single { ClientsListViewModel(get()) }
+    factory { ClientsListScreenModel(get()) }
+    factory { ClientDetailsScreenModel(get()) }
     single { CreateClientViewModel(get()) }
 }

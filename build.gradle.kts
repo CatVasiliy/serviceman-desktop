@@ -26,6 +26,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.swing)
 
+    // Voyager Navigation
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.tab.navigator)
+    implementation(libs.voyager.screenmodel)
+    implementation(libs.voyager.koin)
+
     // Koin Dependency Injection
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

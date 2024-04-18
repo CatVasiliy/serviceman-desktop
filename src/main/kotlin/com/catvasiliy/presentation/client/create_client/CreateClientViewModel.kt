@@ -1,6 +1,6 @@
 package com.catvasiliy.presentation.client.create_client
 
-import com.catvasiliy.domain.model.Client
+import com.catvasiliy.domain.model.client.NewClient
 import com.catvasiliy.domain.repository.ClientRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class CreateClientViewModel(private val repository: ClientRepository) {
         address: String,
         phoneNumber: String
     ) {
-        val client = Client(
+        val client = NewClient(
             firstName = firstName,
             lastName = lastName,
             patronymic = patronymic,
