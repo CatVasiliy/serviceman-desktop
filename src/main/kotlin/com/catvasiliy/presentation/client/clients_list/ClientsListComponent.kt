@@ -1,15 +1,23 @@
 package com.catvasiliy.presentation.client.clients_list
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import com.arkivanov.decompose.ComponentContext
 import com.catvasiliy.domain.model.client.Client
 import com.catvasiliy.domain.repository.ClientRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ClientsListScreenModel(private val repository: ClientRepository) : ScreenModel {
+class ClientsListComponent(
+    private val componentContext: ComponentContext,
+    private val repository: ClientRepository,
+    private val onNavigateToDetails: (Int) -> Unit
+) : ComponentContext by componentContext {
+
+    private val componentScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private val _state = MutableStateFlow<List<Client>>(emptyList())
     val state = _state.asStateFlow()
@@ -19,10 +27,14 @@ class ClientsListScreenModel(private val repository: ClientRepository) : ScreenM
     }
 
     fun loadClientsList() {
-        screenModelScope.launch {
+        componentScope.launch {
             _state.update {
                 repository.getClientsList()
             }
         }
+    }
+
+    fun navigateToDetails(clientId: Int) {
+        onNavigateToDetails(clientId)
     }
 }
