@@ -11,14 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.compose.koinInject
 
 @Composable
-fun CreateClientScreen() {
-    val viewModel = koinInject<CreateClientViewModel>()
+fun CreateClientTab(
+    component: CreateClientComponent
+) {
 
     CreateClientScreenContent(
-        onCreateClient = viewModel::createClient
+        onCreateClient = component::createClient
     )
 }
 

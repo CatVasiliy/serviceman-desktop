@@ -1,17 +1,21 @@
 package com.catvasiliy.presentation.util
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,12 +28,12 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.value.Value
 
-@OptIn(ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TabPages(
     tabPagesValue: Value<ChildPages<*, TabPage>>,
-    onSelect: (TabPageType) -> Unit,
-    onClose: (TabPageType) -> Unit,
+    onSelect: (Int) -> Unit,
+    onClose: (Int) -> Unit,
     modifier: Modifier = Modifier,
     tabPageContent: @Composable (tab: TabPage) -> Unit
 ) {
@@ -37,44 +41,63 @@ fun TabPages(
 
     val childTabPages by state
     val selectedIndex = childTabPages.selectedIndex
+    val itemsSize = childTabPages.items.size
 
-    val tabPages = remember(childTabPages.items) {
-        childTabPages.items.map {
-            it.instance!!
+    if (selectedIndex != -1) {
+
+        val pagerState = rememberPagerState(
+            initialPage = selectedIndex,
+            pageCount = { itemsSize }
+        )
+
+        LaunchedEffect(selectedIndex) {
+            if (pagerState.currentPage != selectedIndex) {
+                pagerState.scrollToPage(selectedIndex)
+            }
         }
-    }
-    val selectedTabPageType = tabPages.getOrNull(selectedIndex)?.tabPageType
 
-    Column(
-        modifier = modifier
-    ) {
-        if (tabPages.isNotEmpty()) {
+        Column(
+            modifier = modifier
+        ) {
             ScrollableTabPagesRow(
-                tabPages = tabPages,
-                selectedTabPageType = selectedTabPageType!!,
+                childTabPages = childTabPages,
                 onSelect = onSelect,
                 onClose = onClose
             )
-            tabPageContent(tabPages[selectedIndex])
+
+            HorizontalPager(
+                state = pagerState,
+                beyondBoundsPageCount = 32,
+                userScrollEnabled = false
+            ) { pageIndex ->
+
+                val instance = childTabPages.items[pageIndex].instance
+
+                instance?.let { tabPage ->
+                    tabPageContent(tabPage)
+                }
+            }
         }
     }
 }
 
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun ScrollableTabPagesRow(
-    tabPages: List<TabPage>,
-    selectedTabPageType: TabPageType,
-    onSelect: (TabPageType) -> Unit,
-    onClose: (TabPageType) -> Unit
+    childTabPages: ChildPages<*, TabPage>,
+    onSelect: (Int) -> Unit,
+    onClose: (Int) -> Unit
 ) {
     LazyRow {
-        items(tabPages) { tab ->
-            TabPageItem(
-                tabPage = tab,
-                selectedTabPageType = selectedTabPageType,
-                onSelect = onSelect,
-                onClose = onClose
-            )
+        itemsIndexed(childTabPages.items) { index, child ->
+            child.instance?.let { tabPage ->
+                TabPageItem(
+                    tabPage = tabPage,
+                    isSelected = index == childTabPages.selectedIndex,
+                    onSelect = { onSelect(index) },
+                    onClose = { onClose(index) }
+                )
+            }
         }
     }
 }
@@ -82,12 +105,10 @@ fun ScrollableTabPagesRow(
 @Composable
 fun TabPageItem(
     tabPage: TabPage,
-    selectedTabPageType: TabPageType,
-    onSelect: (TabPageType) -> Unit,
-    onClose: (TabPageType) -> Unit
+    isSelected: Boolean,
+    onSelect: () -> Unit,
+    onClose: () -> Unit
 ) {
-
-    val isSelected = tabPage.tabPageType == selectedTabPageType
 
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
@@ -96,7 +117,7 @@ fun TabPageItem(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clickable { onSelect(tabPage.tabPageType) }
+            .clickable { onSelect() }
             .hoverable(interactionSource)
     ) {
         Text(
@@ -109,7 +130,7 @@ fun TabPageItem(
             imageVector = Icons.Default.Close,
             contentDescription = null,
             modifier = Modifier
-                .clickable { onClose(tabPage.tabPageType) }
+                .clickable { onClose() }
                 .alpha(closeAlpha)
         )
     }

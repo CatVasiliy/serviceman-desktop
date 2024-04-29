@@ -7,17 +7,26 @@ import androidx.compose.ui.window.MenuBarScope
 
 @Composable
 fun FrameWindowScope.ServiceManMenuBar(
+    onNavigateToCreateRepairOrder: () -> Unit,
     onNavigateToRepairOrdersList: () -> Unit,
+    onNavigateToCreateClient: () -> Unit,
     onNavigateToClientsList: () -> Unit
 ) {
     MenuBar {
-        RepairOrderMenu(onNavigateToRepairOrdersList = onNavigateToRepairOrdersList)
-        ClientMenu(onNavigateToClientsList = onNavigateToClientsList)
+        RepairOrderMenu(
+            onNavigateToCreateRepairOrder = onNavigateToCreateRepairOrder,
+            onNavigateToRepairOrdersList = onNavigateToRepairOrdersList
+        )
+        ClientMenu(
+            onNavigateToCreateClient = onNavigateToCreateClient,
+            onNavigateToClientsList = onNavigateToClientsList
+        )
     }
 }
 
 @Composable
 fun MenuBarScope.RepairOrderMenu(
+    onNavigateToCreateRepairOrder: () -> Unit,
     onNavigateToRepairOrdersList: () -> Unit
 ) {
     Menu(
@@ -25,7 +34,7 @@ fun MenuBarScope.RepairOrderMenu(
     ) {
         Item(
             text = "New Repair Order",
-            onClick = {  }
+            onClick = onNavigateToCreateRepairOrder
         )
         Item(
             text = "Repair Orders List",
@@ -36,6 +45,7 @@ fun MenuBarScope.RepairOrderMenu(
 
 @Composable
 fun MenuBarScope.ClientMenu(
+    onNavigateToCreateClient: () -> Unit,
     onNavigateToClientsList: () -> Unit
 ) {
     Menu(
@@ -43,7 +53,7 @@ fun MenuBarScope.ClientMenu(
     ) {
         Item(
             text = "New Client",
-            onClick = {  }
+            onClick = onNavigateToCreateClient
         )
         Item(
             text = "Clients List",

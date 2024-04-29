@@ -2,41 +2,37 @@ package com.catvasiliy.presentation.util
 
 import com.catvasiliy.presentation.client.client_details.ClientDetailsComponent
 import com.catvasiliy.presentation.client.clients_list.ClientsListComponent
+import com.catvasiliy.presentation.client.create_client.CreateClientComponent
+import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderComponent
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsComponent
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListComponent
 
 sealed class TabPage(
-    val tabPageType: TabPageType,
     val tabPageTitle: String
 ) {
+    data class CreateRepairOrder(
+        val component: CreateRepairOrderComponent
+    ) : TabPage(tabPageTitle = "New Repair Order")
 
     data class RepairOrdersList(
-        val component: RepairOrdersListComponent,
-    ) : TabPage(
-        tabPageType = TabPageType.RepairOrdersList,
-        tabPageTitle = "Repair Orders"
-    )
+        val component: RepairOrdersListComponent
+    ) : TabPage(tabPageTitle = "Repair Orders")
 
-    data class RepairOrderDetails(
-        val repairOrderId: Int,
+    class RepairOrderDetails(
+        repairOrderId: Int,
         val component: RepairOrderDetailsComponent
-    ) : TabPage(
-        tabPageType = TabPageType.RepairOrderDetails(repairOrderId),
-        tabPageTitle = "Repair Order #$repairOrderId"
-    )
+    ) : TabPage(tabPageTitle = "Repair Order #$repairOrderId")
+
+    data class CreateClient(
+        val component: CreateClientComponent
+    ) : TabPage(tabPageTitle = "New Client")
 
     data class ClientsList(
-        val component: ClientsListComponent,
-    ) : TabPage(
-        tabPageType = TabPageType.ClientsList,
-        tabPageTitle = "Clients"
-    )
+        val component: ClientsListComponent
+    ) : TabPage(tabPageTitle = "Clients")
 
-    data class ClientDetails(
-        val clientId: Int,
+    class ClientDetails(
+        clientId: Int,
         val component: ClientDetailsComponent
-    ) : TabPage(
-        tabPageType = TabPageType.ClientDetails(clientId),
-        tabPageTitle = "Client #$clientId"
-    )
+    ) : TabPage(tabPageTitle = "Client #$clientId")
 }

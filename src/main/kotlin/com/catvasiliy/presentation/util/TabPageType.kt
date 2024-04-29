@@ -6,10 +6,16 @@ import kotlinx.serialization.Serializable
 sealed interface TabPageType {
 
     @Serializable
+    data object CreateRepairOrder : TabPageType
+
+    @Serializable
     data object RepairOrdersList : TabPageType
 
     @Serializable
     data class RepairOrderDetails(val repairOrderId: Int) : TabPageType
+
+    @Serializable
+    data object CreateClient : TabPageType
 
     @Serializable
     data object ClientsList : TabPageType

@@ -11,14 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.compose.koinInject
 
 @Composable
-fun CreateRepairOrderScreen() {
-    val viewModel = koinInject<CreateRepairOrderViewModel>()
-
+fun CreateRepairOrderTab(
+    component: CreateRepairOrderComponent
+) {
     CreateRepairOrderScreenContent(
-        onCreateRepairOrder = viewModel::createRepairOrder
+        onCreateRepairOrder = component::createRepairOrder
     )
 }
 

@@ -9,6 +9,8 @@ import com.catvasiliy.domain.repository.ClientRepository
 import com.catvasiliy.domain.repository.RepairOrderRepository
 import com.catvasiliy.presentation.client.client_details.ClientDetailsComponent
 import com.catvasiliy.presentation.client.clients_list.ClientsListComponent
+import com.catvasiliy.presentation.client.create_client.CreateClientComponent
+import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderComponent
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsComponent
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListComponent
 import com.catvasiliy.presentation.util.TabPage
@@ -38,6 +40,12 @@ class RootComponent(
         componentContext: ComponentContext
     ) : TabPage {
         return when(config) {
+            is TabPageConfig.CreateRepairOrder -> TabPage.CreateRepairOrder(
+                component = CreateRepairOrderComponent(
+                    componentContext = componentContext,
+                    repository = repairOrderRepository
+                )
+            )
             is TabPageConfig.RepairOrdersList -> TabPage.RepairOrdersList(
                 component = RepairOrdersListComponent(
                     componentContext = componentContext,
@@ -48,6 +56,12 @@ class RootComponent(
             is TabPageConfig.RepairOrderDetails -> TabPage.RepairOrderDetails(
                 repairOrderId = config.repairOrderId,
                 component = RepairOrderDetailsComponent(config.repairOrderId, componentContext, repairOrderRepository)
+            )
+            is TabPageConfig.CreateClient -> TabPage.CreateClient(
+                component = CreateClientComponent(
+                    componentContext = componentContext,
+                    repository = clientRepository
+                )
             )
             is TabPageConfig.ClientsList -> TabPage.ClientsList(
                 component = ClientsListComponent(
@@ -80,19 +94,14 @@ class RootComponent(
         )
     }
 
-    fun selectTabPage(tabPageType: TabPageType) {
-        navigation.navigate(
-            transformer = { pages ->
-                val newIndex = pages.items.indexOfFirst { it.tabPageType == tabPageType }
-                pages.copy(selectedIndex = newIndex)
-            }
-        )
+    fun selectTabPage(tabPageIndex: Int) {
+        navigation.select(tabPageIndex)
     }
 
-    fun closeTabPage(tabPageType: TabPageType) {
+    fun closeTabPage(tabPageIndex: Int) {
         navigation.navigate(
             transformer = { pages ->
-                val tabToClose = pages.items.first { it.tabPageType == tabPageType }
+                val tabToClose = pages.items[tabPageIndex]
                 val newPagesItems = pages.items - tabToClose
 
                 pages.copy(newPagesItems, newPagesItems.lastIndex)
@@ -102,8 +111,10 @@ class RootComponent(
 
     private fun createNewTabPageConfig(tabPageType: TabPageType): TabPageConfig =
         when(tabPageType) {
+            is TabPageType.CreateRepairOrder -> TabPageConfig.CreateRepairOrder
             is TabPageType.RepairOrdersList -> TabPageConfig.RepairOrdersList
             is TabPageType.RepairOrderDetails -> TabPageConfig.RepairOrderDetails(tabPageType.repairOrderId)
+            is TabPageType.CreateClient -> TabPageConfig.CreateClient
             is TabPageType.ClientsList -> TabPageConfig.ClientsList
             is TabPageType.ClientDetails -> TabPageConfig.ClientDetails(tabPageType.clientId)
         }
@@ -119,10 +130,16 @@ class RootComponent(
     private sealed class TabPageConfig(val tabPageType: TabPageType) {
 
         @Serializable
+        data object CreateRepairOrder : TabPageConfig(TabPageType.CreateRepairOrder)
+
+        @Serializable
         data object RepairOrdersList : TabPageConfig(TabPageType.RepairOrdersList)
 
         @Serializable
         data class RepairOrderDetails(val repairOrderId: Int) : TabPageConfig(TabPageType.RepairOrderDetails(repairOrderId))
+
+        @Serializable
+        data object CreateClient : TabPageConfig(TabPageType.CreateClient)
 
         @Serializable
         data object ClientsList : TabPageConfig(TabPageType.ClientsList)

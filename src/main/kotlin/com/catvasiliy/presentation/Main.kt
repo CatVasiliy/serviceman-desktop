@@ -1,10 +1,13 @@
 package com.catvasiliy.presentation
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
@@ -14,6 +17,8 @@ import com.catvasiliy.data.RepairOrderRepositoryImpl
 import com.catvasiliy.di.appModule
 import com.catvasiliy.presentation.client.client_details.ClientDetailsTab
 import com.catvasiliy.presentation.client.clients_list.ClientsListTab
+import com.catvasiliy.presentation.client.create_client.CreateClientTab
+import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderTab
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsTab
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListTab
 import com.catvasiliy.presentation.util.ServiceManMenuBar
@@ -69,7 +74,9 @@ fun main() {
             title = "ServiceMan"
         ) {
             ServiceManMenuBar(
+                onNavigateToCreateRepairOrder = { rootComponent.newTabPage(TabPageType.CreateRepairOrder) },
                 onNavigateToRepairOrdersList = { rootComponent.newTabPage(TabPageType.RepairOrdersList) },
+                onNavigateToCreateClient = { rootComponent.newTabPage(TabPageType.CreateClient) },
                 onNavigateToClientsList = { rootComponent.newTabPage(TabPageType.ClientsList) }
             )
             MaterialTheme {
@@ -77,15 +84,17 @@ fun main() {
                     Column {
                         TabPages(
                             tabPagesValue = rootComponent.tabPages,
-                            onSelect = { rootComponent.selectTabPage(it) },
-                            onClose = { rootComponent.closeTabPage(it) },
+                            onSelect = rootComponent::selectTabPage,
+                            onClose = rootComponent::closeTabPage,
                             modifier = Modifier.fillMaxSize()
-                        ) { tab ->
-                            when(tab) {
-                                is TabPage.RepairOrdersList -> RepairOrdersListTab(tab.component)
-                                is TabPage.RepairOrderDetails -> RepairOrderDetailsTab(tab.component)
-                                is TabPage.ClientsList -> ClientsListTab(tab.component)
-                                is TabPage.ClientDetails -> ClientDetailsTab(tab.component)
+                        ) { tabPage ->
+                            when(tabPage) {
+                                is TabPage.CreateRepairOrder -> CreateRepairOrderTab(tabPage.component)
+                                is TabPage.RepairOrdersList -> RepairOrdersListTab(tabPage.component)
+                                is TabPage.RepairOrderDetails -> RepairOrderDetailsTab(tabPage.component)
+                                is TabPage.CreateClient -> CreateClientTab(tabPage.component)
+                                is TabPage.ClientsList -> ClientsListTab(tabPage.component)
+                                is TabPage.ClientDetails -> ClientDetailsTab(tabPage.component)
                             }
                         }
                     }
