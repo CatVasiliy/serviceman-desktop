@@ -5,91 +5,31 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.children.ChildNavState
 import com.arkivanov.decompose.router.pages.*
 import com.arkivanov.decompose.value.Value
-import com.catvasiliy.domain.repository.ClientRepository
-import com.catvasiliy.domain.repository.RepairOrderRepository
-import com.catvasiliy.presentation.client.client_details.ClientDetailsComponent
-import com.catvasiliy.presentation.client.clients_list.ClientsListComponent
-import com.catvasiliy.presentation.client.create_client.CreateClientComponent
-import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderComponent
-import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsComponent
-import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListComponent
-import com.catvasiliy.presentation.util.TabPage
-import com.catvasiliy.presentation.util.TabPageType
-import kotlinx.serialization.Serializable
+import com.catvasiliy.presentation.util.tab_pages.TabPage
+import com.catvasiliy.presentation.util.tab_pages.TabPageConfig
+import com.catvasiliy.presentation.util.tab_pages.TabPageFactory
 
 @OptIn(ExperimentalDecomposeApi::class)
 class RootComponent(
-    componentContext: ComponentContext,
-    private val repairOrderRepository: RepairOrderRepository,
-    private val clientRepository: ClientRepository
+    private val componentContext: ComponentContext,
+    private val tabPageFactory: TabPageFactory
 ) : ComponentContext by componentContext {
 
     private val navigation = PagesNavigation<TabPageConfig>()
 
-    val tabPages: Value<ChildPages<*, TabPage>> =
+    val tabPages: Value<ChildPages<TabPageConfig, TabPage>> =
         childPages(
             source = navigation,
             serializer = TabPageConfig.serializer(),
             initialPages = { Pages() },
             pageStatus = ::getTabPageStatus,
-            childFactory = ::createChild
+            childFactory = ::createTabPage
         )
 
-    private fun createChild(
-        config: TabPageConfig,
-        componentContext: ComponentContext
-    ) : TabPage {
-        return when(config) {
-            is TabPageConfig.CreateRepairOrder -> TabPage.CreateRepairOrder(
-                component = CreateRepairOrderComponent(
-                    componentContext = componentContext,
-                    repository = repairOrderRepository
-                )
-            )
-            is TabPageConfig.RepairOrdersList -> TabPage.RepairOrdersList(
-                component = RepairOrdersListComponent(
-                    componentContext = componentContext,
-                    repository = repairOrderRepository,
-                    onNavigateToDetails = { newTabPage(TabPageType.RepairOrderDetails(it)) }
-                )
-            )
-            is TabPageConfig.RepairOrderDetails -> TabPage.RepairOrderDetails(
-                repairOrderId = config.repairOrderId,
-                component = RepairOrderDetailsComponent(config.repairOrderId, componentContext, repairOrderRepository)
-            )
-            is TabPageConfig.CreateClient -> TabPage.CreateClient(
-                component = CreateClientComponent(
-                    componentContext = componentContext,
-                    repository = clientRepository
-                )
-            )
-            is TabPageConfig.ClientsList -> TabPage.ClientsList(
-                component = ClientsListComponent(
-                    componentContext = componentContext,
-                    repository = clientRepository,
-                    onNavigateToDetails = { newTabPage(TabPageType.ClientDetails(it)) }
-                )
-            )
-            is TabPageConfig.ClientDetails -> TabPage.ClientDetails(
-                clientId = config.clientId,
-                component = ClientDetailsComponent(config.clientId, componentContext, clientRepository)
-            )
-        }
-    }
-
-    fun newTabPage(tabPageType: TabPageType) {
+    fun newTabPage(newTabPageConfig: TabPageConfig) {
         navigation.navigate(
-            transformer = { pages ->
-                val existingIndex = pages.items.indexOfFirst { it.tabPageType == tabPageType }
-                if (existingIndex != -1) {
-                    pages.copy(selectedIndex = existingIndex)
-                } else {
-                    val newIndex = pages.items.lastIndex + 1
-                    val newTabConfig = createNewTabPageConfig(tabPageType)
-                    val newPagesItems = pages.items + newTabConfig
-
-                    pages.copy(newPagesItems, newIndex)
-                }
+            transformer = { tabPages ->
+                addNewTabPage(tabPages = tabPages, newTabPageConfig = newTabPageConfig)
             }
         )
     }
@@ -100,24 +40,22 @@ class RootComponent(
 
     fun closeTabPage(tabPageIndex: Int) {
         navigation.navigate(
-            transformer = { pages ->
-                val tabToClose = pages.items[tabPageIndex]
-                val newPagesItems = pages.items - tabToClose
-
-                pages.copy(newPagesItems, newPagesItems.lastIndex)
+            transformer = { tabPages ->
+                removeTabPage(tabPages = tabPages, tabPageIndexToRemove = tabPageIndex)
             }
         )
     }
 
-    private fun createNewTabPageConfig(tabPageType: TabPageType): TabPageConfig =
-        when(tabPageType) {
-            is TabPageType.CreateRepairOrder -> TabPageConfig.CreateRepairOrder
-            is TabPageType.RepairOrdersList -> TabPageConfig.RepairOrdersList
-            is TabPageType.RepairOrderDetails -> TabPageConfig.RepairOrderDetails(tabPageType.repairOrderId)
-            is TabPageType.CreateClient -> TabPageConfig.CreateClient
-            is TabPageType.ClientsList -> TabPageConfig.ClientsList
-            is TabPageType.ClientDetails -> TabPageConfig.ClientDetails(tabPageType.clientId)
-        }
+    private fun createTabPage(
+        tabPageConfig: TabPageConfig,
+        componentContext: ComponentContext
+    ) : TabPage {
+        return tabPageFactory.createTabPage(
+            tabPageConfig = tabPageConfig,
+            componentContext = componentContext,
+            onNavigate = { newTabPage(newTabPageConfig = it) }
+        )
+    }
 
     private fun getTabPageStatus(selectedIndex: Int, tabPages: Pages<*>): ChildNavState.Status =
         if (selectedIndex == tabPages.selectedIndex) {
@@ -126,25 +64,33 @@ class RootComponent(
             ChildNavState.Status.CREATED
         }
 
-    @Serializable
-    private sealed class TabPageConfig(val tabPageType: TabPageType) {
+    private fun addNewTabPage(tabPages: Pages<TabPageConfig>, newTabPageConfig: TabPageConfig): Pages<TabPageConfig> {
+        val tabPagesConfigList = tabPages.items
 
-        @Serializable
-        data object CreateRepairOrder : TabPageConfig(TabPageType.CreateRepairOrder)
+        val existingIndex = tabPagesConfigList.indexOfFirst { it == newTabPageConfig }
 
-        @Serializable
-        data object RepairOrdersList : TabPageConfig(TabPageType.RepairOrdersList)
+        return if (existingIndex != -1) {
+            tabPages.copy(selectedIndex = existingIndex)
+        } else {
+            val newSelectedIndex = tabPagesConfigList.lastIndex + 1
+            val newTabPagesConfigList = tabPagesConfigList + newTabPageConfig
 
-        @Serializable
-        data class RepairOrderDetails(val repairOrderId: Int) : TabPageConfig(TabPageType.RepairOrderDetails(repairOrderId))
+            tabPages.copy(items = newTabPagesConfigList, selectedIndex = newSelectedIndex)
+        }
+    }
 
-        @Serializable
-        data object CreateClient : TabPageConfig(TabPageType.CreateClient)
+    private fun removeTabPage(tabPages: Pages<TabPageConfig>, tabPageIndexToRemove: Int): Pages<TabPageConfig> {
+        val tabPagesConfigList = tabPages.items
 
-        @Serializable
-        data object ClientsList : TabPageConfig(TabPageType.ClientsList)
+        val newSelectedIndex = if (tabPageIndexToRemove == 0) {
+            if (tabPagesConfigList.size == 1) -1 else 0
+        } else {
+            tabPageIndexToRemove - 1
+        }
 
-        @Serializable
-        data class ClientDetails(val clientId: Int) : TabPageConfig(TabPageType.ClientDetails(clientId))
+        val tabPageToRemove = tabPagesConfigList[tabPageIndexToRemove]
+        val newTabPagesConfigList = tabPagesConfigList - tabPageToRemove
+
+        return tabPages.copy(items = newTabPagesConfigList, selectedIndex = newSelectedIndex)
     }
 }

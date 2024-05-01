@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RepairOrderDetailsComponent(
-    private val repairOrderId: Int,
     private val componentContext: ComponentContext,
-    private val repairOrderRepository: RepairOrderRepository
+    private val repository: RepairOrderRepository,
+    private val repairOrderId: Int
 ) : ComponentContext by componentContext {
 
     private val componentScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -29,7 +29,7 @@ class RepairOrderDetailsComponent(
     private fun getRepairOrder() {
         componentScope.launch {
             _state.update {
-                repairOrderRepository.getRepairOrderById(repairOrderId)
+                repository.getRepairOrderById(repairOrderId)
             }
         }
     }

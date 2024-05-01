@@ -1,4 +1,4 @@
-package com.catvasiliy.presentation.util
+package com.catvasiliy.presentation.ui_components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope

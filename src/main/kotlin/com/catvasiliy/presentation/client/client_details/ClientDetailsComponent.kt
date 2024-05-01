@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ClientDetailsComponent(
-    private val clientId: Int,
     private val componentContext: ComponentContext,
-    private val repository: ClientRepository
+    private val repository: ClientRepository,
+    private val clientId: Int
 ) : ComponentContext by componentContext {
 
     private val componentScope = CoroutineScope(Dispatchers.Main + SupervisorJob())

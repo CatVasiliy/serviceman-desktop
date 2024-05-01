@@ -21,10 +21,12 @@ import com.catvasiliy.presentation.client.create_client.CreateClientTab
 import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderTab
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsTab
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListTab
-import com.catvasiliy.presentation.util.ServiceManMenuBar
-import com.catvasiliy.presentation.util.TabPage
-import com.catvasiliy.presentation.util.TabPageType
-import com.catvasiliy.presentation.util.TabPages
+import com.catvasiliy.presentation.ui_components.ServiceManMenuBar
+import com.catvasiliy.presentation.ui_components.TabPages
+import com.catvasiliy.presentation.util.tab_pages.*
+import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
+import com.catvasiliy.presentation.util.tab_pages.factories.RepairOrderTabPageFactory
+import com.catvasiliy.presentation.util.tab_pages.factories.TabPageFactoryImpl
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -54,13 +56,20 @@ fun main() {
     val repairOrderRepository = RepairOrderRepositoryImpl(httpClient)
     val clientRepository = ClientRepositoryImpl(httpClient)
 
+    val repairOrderTabPageFactory = RepairOrderTabPageFactory(repository = repairOrderRepository)
+    val clientTabPageFactory = ClientTabPageFactory(repository = clientRepository)
+
+    val tabPageFactory = TabPageFactoryImpl(
+        repairOrderTabPageFactory = repairOrderTabPageFactory,
+        clientTabPageFactory = clientTabPageFactory
+    )
+
     val lifecycle = LifecycleRegistry()
 
     val rootComponent = runOnUiThread {
         RootComponent(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            repairOrderRepository = repairOrderRepository,
-            clientRepository = clientRepository
+            tabPageFactory = tabPageFactory
         )
     }
 
@@ -74,10 +83,10 @@ fun main() {
             title = "ServiceMan"
         ) {
             ServiceManMenuBar(
-                onNavigateToCreateRepairOrder = { rootComponent.newTabPage(TabPageType.CreateRepairOrder) },
-                onNavigateToRepairOrdersList = { rootComponent.newTabPage(TabPageType.RepairOrdersList) },
-                onNavigateToCreateClient = { rootComponent.newTabPage(TabPageType.CreateClient) },
-                onNavigateToClientsList = { rootComponent.newTabPage(TabPageType.ClientsList) }
+                onNavigateToCreateRepairOrder = { rootComponent.newTabPage(RepairOrderConfig.CreateRepairOrder) },
+                onNavigateToRepairOrdersList = { rootComponent.newTabPage(RepairOrderConfig.RepairOrdersList) },
+                onNavigateToCreateClient = { rootComponent.newTabPage(ClientConfig.CreateClient) },
+                onNavigateToClientsList = { rootComponent.newTabPage(ClientConfig.ClientsList) }
             )
             MaterialTheme {
                 Surface {
@@ -89,12 +98,12 @@ fun main() {
                             modifier = Modifier.fillMaxSize()
                         ) { tabPage ->
                             when(tabPage) {
-                                is TabPage.CreateRepairOrder -> CreateRepairOrderTab(tabPage.component)
-                                is TabPage.RepairOrdersList -> RepairOrdersListTab(tabPage.component)
-                                is TabPage.RepairOrderDetails -> RepairOrderDetailsTab(tabPage.component)
-                                is TabPage.CreateClient -> CreateClientTab(tabPage.component)
-                                is TabPage.ClientsList -> ClientsListTab(tabPage.component)
-                                is TabPage.ClientDetails -> ClientDetailsTab(tabPage.component)
+                                is RepairOrderTabPage.CreateRepairOrder -> CreateRepairOrderTab(tabPage.component)
+                                is RepairOrderTabPage.RepairOrdersList -> RepairOrdersListTab(tabPage.component)
+                                is RepairOrderTabPage.RepairOrderDetails -> RepairOrderDetailsTab(tabPage.component)
+                                is ClientTabPage.CreateClient -> CreateClientTab(tabPage.component)
+                                is ClientTabPage.ClientsList -> ClientsListTab(tabPage.component)
+                                is ClientTabPage.ClientDetails -> ClientDetailsTab(tabPage.component)
                             }
                         }
                     }

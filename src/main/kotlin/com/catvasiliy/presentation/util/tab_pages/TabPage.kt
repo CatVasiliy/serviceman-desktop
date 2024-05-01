@@ -1,4 +1,4 @@
-package com.catvasiliy.presentation.util
+package com.catvasiliy.presentation.util.tab_pages
 
 import com.catvasiliy.presentation.client.client_details.ClientDetailsComponent
 import com.catvasiliy.presentation.client.clients_list.ClientsListComponent
@@ -7,32 +7,36 @@ import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepair
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsComponent
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListComponent
 
-sealed class TabPage(
-    val tabPageTitle: String
-) {
+sealed class TabPage(val tabPageTitle: String)
+
+sealed class RepairOrderTabPage(tabPageTitle: String) : TabPage(tabPageTitle) {
+
     data class CreateRepairOrder(
         val component: CreateRepairOrderComponent
-    ) : TabPage(tabPageTitle = "New Repair Order")
+    ) : RepairOrderTabPage(tabPageTitle = "New Repair Order")
 
     data class RepairOrdersList(
         val component: RepairOrdersListComponent
-    ) : TabPage(tabPageTitle = "Repair Orders")
+    ) : RepairOrderTabPage(tabPageTitle = "Repair Orders")
 
     class RepairOrderDetails(
         repairOrderId: Int,
         val component: RepairOrderDetailsComponent
-    ) : TabPage(tabPageTitle = "Repair Order #$repairOrderId")
+    ) : RepairOrderTabPage(tabPageTitle = "Repair Order #$repairOrderId")
+}
+
+sealed class ClientTabPage(tabPageTitle: String) : TabPage(tabPageTitle) {
 
     data class CreateClient(
         val component: CreateClientComponent
-    ) : TabPage(tabPageTitle = "New Client")
+    ) : ClientTabPage(tabPageTitle = "New Client")
 
     data class ClientsList(
         val component: ClientsListComponent
-    ) : TabPage(tabPageTitle = "Clients")
+    ) : ClientTabPage(tabPageTitle = "Clients")
 
     class ClientDetails(
-        clientId: Int,
-        val component: ClientDetailsComponent
-    ) : TabPage(tabPageTitle = "Client #$clientId")
+        val component: ClientDetailsComponent,
+        clientId: Int
+    ) : ClientTabPage(tabPageTitle = "Client #$clientId")
 }
