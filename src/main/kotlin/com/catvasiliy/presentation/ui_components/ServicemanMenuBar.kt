@@ -6,7 +6,7 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuBarScope
 
 @Composable
-fun FrameWindowScope.ServiceManMenuBar(
+fun FrameWindowScope.ServicemanMenuBar(
     onNavigateToCreateRepairOrder: () -> Unit,
     onNavigateToRepairOrdersList: () -> Unit,
     onNavigateToCreateClient: () -> Unit,

@@ -21,7 +21,7 @@ import com.catvasiliy.presentation.client.create_client.CreateClientTab
 import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderTab
 import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsTab
 import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListTab
-import com.catvasiliy.presentation.ui_components.ServiceManMenuBar
+import com.catvasiliy.presentation.ui_components.ServicemanMenuBar
 import com.catvasiliy.presentation.ui_components.TabPages
 import com.catvasiliy.presentation.util.tab_pages.*
 import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
@@ -80,9 +80,9 @@ fun main() {
 
         Window(
             onCloseRequest = ::exitApplication,
-            title = "ServiceMan"
+            title = "Serviceman"
         ) {
-            ServiceManMenuBar(
+            ServicemanMenuBar(
                 onNavigateToCreateRepairOrder = { mainComponent.newTabPage(RepairOrderConfig.CreateRepairOrder) },
                 onNavigateToRepairOrdersList = { mainComponent.newTabPage(RepairOrderConfig.RepairOrdersList) },
                 onNavigateToCreateClient = { mainComponent.newTabPage(ClientConfig.CreateClient) },
