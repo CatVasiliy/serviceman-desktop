@@ -10,7 +10,7 @@ import com.catvasiliy.presentation.util.tab_pages.TabPageConfig
 import com.catvasiliy.presentation.util.tab_pages.TabPageFactory
 
 @OptIn(ExperimentalDecomposeApi::class)
-class RootComponent(
+class MainComponent(
     private val componentContext: ComponentContext,
     private val tabPageFactory: TabPageFactory
 ) : ComponentContext by componentContext {

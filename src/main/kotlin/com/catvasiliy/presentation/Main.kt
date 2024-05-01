@@ -66,8 +66,8 @@ fun main() {
 
     val lifecycle = LifecycleRegistry()
 
-    val rootComponent = runOnUiThread {
-        RootComponent(
+    val mainComponent = runOnUiThread {
+        MainComponent(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             tabPageFactory = tabPageFactory
         )
@@ -83,18 +83,18 @@ fun main() {
             title = "ServiceMan"
         ) {
             ServiceManMenuBar(
-                onNavigateToCreateRepairOrder = { rootComponent.newTabPage(RepairOrderConfig.CreateRepairOrder) },
-                onNavigateToRepairOrdersList = { rootComponent.newTabPage(RepairOrderConfig.RepairOrdersList) },
-                onNavigateToCreateClient = { rootComponent.newTabPage(ClientConfig.CreateClient) },
-                onNavigateToClientsList = { rootComponent.newTabPage(ClientConfig.ClientsList) }
+                onNavigateToCreateRepairOrder = { mainComponent.newTabPage(RepairOrderConfig.CreateRepairOrder) },
+                onNavigateToRepairOrdersList = { mainComponent.newTabPage(RepairOrderConfig.RepairOrdersList) },
+                onNavigateToCreateClient = { mainComponent.newTabPage(ClientConfig.CreateClient) },
+                onNavigateToClientsList = { mainComponent.newTabPage(ClientConfig.ClientsList) }
             )
             MaterialTheme {
                 Surface {
                     Column {
                         TabPages(
-                            tabPagesValue = rootComponent.tabPages,
-                            onSelect = rootComponent::selectTabPage,
-                            onClose = rootComponent::closeTabPage,
+                            tabPagesValue = mainComponent.tabPages,
+                            onSelect = mainComponent::selectTabPage,
+                            onClose = mainComponent::closeTabPage,
                             modifier = Modifier.fillMaxSize()
                         ) { tabPage ->
                             when(tabPage) {
