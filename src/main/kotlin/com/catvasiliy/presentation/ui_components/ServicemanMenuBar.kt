@@ -4,22 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuBarScope
+import com.catvasiliy.presentation.util.tab_pages.ClientConfig
+import com.catvasiliy.presentation.util.tab_pages.RepairOrderConfig
+import com.catvasiliy.presentation.util.tab_pages.TabPageConfig
 
 @Composable
 fun FrameWindowScope.ServicemanMenuBar(
-    onNavigateToCreateRepairOrder: () -> Unit,
-    onNavigateToRepairOrdersList: () -> Unit,
-    onNavigateToCreateClient: () -> Unit,
-    onNavigateToClientsList: () -> Unit
+    onOpenNewTab: (TabPageConfig) -> Unit
 ) {
     MenuBar {
         RepairOrderMenu(
-            onNavigateToCreateRepairOrder = onNavigateToCreateRepairOrder,
-            onNavigateToRepairOrdersList = onNavigateToRepairOrdersList
+            onNavigateToCreateRepairOrder = { onOpenNewTab(RepairOrderConfig.CreateRepairOrder) },
+            onNavigateToRepairOrdersList = { onOpenNewTab(RepairOrderConfig.RepairOrdersList) }
         )
         ClientMenu(
-            onNavigateToCreateClient = onNavigateToCreateClient,
-            onNavigateToClientsList = onNavigateToClientsList
+            onNavigateToCreateClient = { onOpenNewTab(ClientConfig.CreateClient) },
+            onNavigateToClientsList = { onOpenNewTab(ClientConfig.ClientsList) }
         )
     }
 }

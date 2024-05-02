@@ -19,9 +19,7 @@ import com.catvasiliy.presentation.client.ClientTab
 import com.catvasiliy.presentation.repair_order.RepairOrderTab
 import com.catvasiliy.presentation.ui_components.ServicemanMenuBar
 import com.catvasiliy.presentation.ui_components.TabPages
-import com.catvasiliy.presentation.util.tab_pages.ClientConfig
 import com.catvasiliy.presentation.util.tab_pages.ClientTabPage
-import com.catvasiliy.presentation.util.tab_pages.RepairOrderConfig
 import com.catvasiliy.presentation.util.tab_pages.RepairOrderTabPage
 import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
 import com.catvasiliy.presentation.util.tab_pages.factories.RepairOrderTabPageFactory
@@ -82,10 +80,7 @@ fun main() {
             title = "Serviceman"
         ) {
             ServicemanMenuBar(
-                onNavigateToCreateRepairOrder = { mainComponent.newTabPage(RepairOrderConfig.CreateRepairOrder) },
-                onNavigateToRepairOrdersList = { mainComponent.newTabPage(RepairOrderConfig.RepairOrdersList) },
-                onNavigateToCreateClient = { mainComponent.newTabPage(ClientConfig.CreateClient) },
-                onNavigateToClientsList = { mainComponent.newTabPage(ClientConfig.ClientsList) }
+                onOpenNewTab = { mainComponent.newTabPage(newTabPageConfig = it) }
             )
             MaterialTheme {
                 Surface {
