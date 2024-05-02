@@ -30,6 +30,9 @@ dependencies {
     implementation(libs.decompose)
     implementation(libs.decompose.extensions.compose)
 
+    // Essenty
+    implementation(libs.essenty.lifecycle.coroutines)
+
     // Koin Dependency Injection
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

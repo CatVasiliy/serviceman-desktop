@@ -1,9 +1,9 @@
 package com.catvasiliy.presentation.repair_order.repair_orders_list
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.catvasiliy.domain.model.repair_order.RepairOrder
 import com.catvasiliy.domain.repository.RepairOrderRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ class RepairOrdersListComponent(
     private val onNavigateToDetails: (Int) -> Unit
 ) : ComponentContext by componentContext {
 
-    private val componentScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val componentScope = coroutineScope(Dispatchers.Main + SupervisorJob())
 
     private val _state = MutableStateFlow<List<RepairOrder>>(emptyList())
     val state = _state.asStateFlow()

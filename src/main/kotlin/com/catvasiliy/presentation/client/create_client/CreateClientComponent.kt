@@ -1,9 +1,9 @@
 package com.catvasiliy.presentation.client.create_client
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.catvasiliy.domain.model.client.NewClient
 import com.catvasiliy.domain.repository.ClientRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ class CreateClientComponent(
     private val repository: ClientRepository
 ) : ComponentContext by componentContext {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val componentScope = coroutineScope(Dispatchers.Main + SupervisorJob())
 
     fun createClient(
         firstName: String,
@@ -30,7 +30,7 @@ class CreateClientComponent(
             phoneNumber = phoneNumber
         )
 
-        coroutineScope.launch {
+        componentScope.launch {
             repository.createClient(client)
         }
     }
