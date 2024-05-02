@@ -12,8 +12,6 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.catvasiliy.data.ClientRepositoryImpl
-import com.catvasiliy.data.RepairOrderRepositoryImpl
 import com.catvasiliy.di.appModule
 import com.catvasiliy.presentation.client.ClientTab
 import com.catvasiliy.presentation.repair_order.RepairOrderTab
@@ -21,15 +19,6 @@ import com.catvasiliy.presentation.ui_components.ServicemanMenuBar
 import com.catvasiliy.presentation.ui_components.TabPages
 import com.catvasiliy.presentation.util.tab_pages.ClientTabPage
 import com.catvasiliy.presentation.util.tab_pages.RepairOrderTabPage
-import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
-import com.catvasiliy.presentation.util.tab_pages.factories.RepairOrderTabPageFactory
-import com.catvasiliy.presentation.util.tab_pages.factories.TabPageFactoryImpl
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
 import org.koin.core.context.startKoin
 import javax.swing.SwingUtilities
 
@@ -40,33 +29,11 @@ fun main() {
         modules(appModule)
     }
 
-    val httpClient = HttpClient(CIO) {
-        defaultRequest {
-            url("http://localhost:8080/")
-        }
-        install(ContentNegotiation) {
-            json()
-        }
-        install(Logging)
-    }
-
-    val repairOrderRepository = RepairOrderRepositoryImpl(httpClient)
-    val clientRepository = ClientRepositoryImpl(httpClient)
-
-    val repairOrderTabPageFactory = RepairOrderTabPageFactory(repository = repairOrderRepository)
-    val clientTabPageFactory = ClientTabPageFactory(repository = clientRepository)
-
-    val tabPageFactory = TabPageFactoryImpl(
-        repairOrderTabPageFactory = repairOrderTabPageFactory,
-        clientTabPageFactory = clientTabPageFactory
-    )
-
     val lifecycle = LifecycleRegistry()
 
     val mainComponent = runOnUiThread {
         MainComponent(
-            componentContext = DefaultComponentContext(lifecycle = lifecycle),
-            tabPageFactory = tabPageFactory
+            componentContext = DefaultComponentContext(lifecycle = lifecycle)
         )
     }
 

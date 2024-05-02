@@ -4,6 +4,10 @@ import com.catvasiliy.data.ClientRepositoryImpl
 import com.catvasiliy.data.RepairOrderRepositoryImpl
 import com.catvasiliy.domain.repository.ClientRepository
 import com.catvasiliy.domain.repository.RepairOrderRepository
+import com.catvasiliy.presentation.util.tab_pages.TabPageFactory
+import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
+import com.catvasiliy.presentation.util.tab_pages.factories.RepairOrderTabPageFactory
+import com.catvasiliy.presentation.util.tab_pages.factories.TabPageFactoryImpl
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -28,4 +32,9 @@ val appModule = module {
 
     single<RepairOrderRepository> { RepairOrderRepositoryImpl(get()) }
     single<ClientRepository> { ClientRepositoryImpl(get()) }
+
+    factory<RepairOrderTabPageFactory> { RepairOrderTabPageFactory(get()) }
+    factory<ClientTabPageFactory> { ClientTabPageFactory(get()) }
+
+    factory<TabPageFactory> { TabPageFactoryImpl(get(), get()) }
 }

@@ -8,12 +8,15 @@ import com.arkivanov.decompose.value.Value
 import com.catvasiliy.presentation.util.tab_pages.TabPage
 import com.catvasiliy.presentation.util.tab_pages.TabPageConfig
 import com.catvasiliy.presentation.util.tab_pages.TabPageFactory
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 @OptIn(ExperimentalDecomposeApi::class)
 class MainComponent(
-    private val componentContext: ComponentContext,
-    private val tabPageFactory: TabPageFactory
-) : ComponentContext by componentContext {
+    private val componentContext: ComponentContext
+) : ComponentContext by componentContext, KoinComponent {
+
+    private val tabPageFactory: TabPageFactory by inject()
 
     private val navigation = PagesNavigation<TabPageConfig>()
 
