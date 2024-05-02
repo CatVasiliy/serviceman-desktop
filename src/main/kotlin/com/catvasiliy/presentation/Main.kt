@@ -15,15 +15,14 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.catvasiliy.data.ClientRepositoryImpl
 import com.catvasiliy.data.RepairOrderRepositoryImpl
 import com.catvasiliy.di.appModule
-import com.catvasiliy.presentation.client.client_details.ClientDetailsTab
-import com.catvasiliy.presentation.client.clients_list.ClientsListTab
-import com.catvasiliy.presentation.client.create_client.CreateClientTab
-import com.catvasiliy.presentation.repair_order.create_repair_order.CreateRepairOrderTab
-import com.catvasiliy.presentation.repair_order.repair_order_details.RepairOrderDetailsTab
-import com.catvasiliy.presentation.repair_order.repair_orders_list.RepairOrdersListTab
+import com.catvasiliy.presentation.client.ClientTab
+import com.catvasiliy.presentation.repair_order.RepairOrderTab
 import com.catvasiliy.presentation.ui_components.ServicemanMenuBar
 import com.catvasiliy.presentation.ui_components.TabPages
-import com.catvasiliy.presentation.util.tab_pages.*
+import com.catvasiliy.presentation.util.tab_pages.ClientConfig
+import com.catvasiliy.presentation.util.tab_pages.ClientTabPage
+import com.catvasiliy.presentation.util.tab_pages.RepairOrderConfig
+import com.catvasiliy.presentation.util.tab_pages.RepairOrderTabPage
 import com.catvasiliy.presentation.util.tab_pages.factories.ClientTabPageFactory
 import com.catvasiliy.presentation.util.tab_pages.factories.RepairOrderTabPageFactory
 import com.catvasiliy.presentation.util.tab_pages.factories.TabPageFactoryImpl
@@ -98,12 +97,8 @@ fun main() {
                             modifier = Modifier.fillMaxSize()
                         ) { tabPage ->
                             when(tabPage) {
-                                is RepairOrderTabPage.CreateRepairOrder -> CreateRepairOrderTab(tabPage.component)
-                                is RepairOrderTabPage.RepairOrdersList -> RepairOrdersListTab(tabPage.component)
-                                is RepairOrderTabPage.RepairOrderDetails -> RepairOrderDetailsTab(tabPage.component)
-                                is ClientTabPage.CreateClient -> CreateClientTab(tabPage.component)
-                                is ClientTabPage.ClientsList -> ClientsListTab(tabPage.component)
-                                is ClientTabPage.ClientDetails -> ClientDetailsTab(tabPage.component)
+                                is RepairOrderTabPage -> RepairOrderTab(tabPage)
+                                is ClientTabPage -> ClientTab(tabPage)
                             }
                         }
                     }
