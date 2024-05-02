@@ -17,10 +17,10 @@ import com.catvasiliy.presentation.client.ClientTab
 import com.catvasiliy.presentation.repair_order.RepairOrderTab
 import com.catvasiliy.presentation.ui_components.ServicemanMenuBar
 import com.catvasiliy.presentation.ui_components.TabPages
+import com.catvasiliy.presentation.util.runOnUiThread
 import com.catvasiliy.presentation.util.tab_pages.ClientTabPage
 import com.catvasiliy.presentation.util.tab_pages.RepairOrderTabPage
 import org.koin.core.context.startKoin
-import javax.swing.SwingUtilities
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
@@ -46,11 +46,9 @@ fun main() {
             onCloseRequest = ::exitApplication,
             title = "Serviceman"
         ) {
-            ServicemanMenuBar(
-                onOpenNewTab = { mainComponent.newTabPage(newTabPageConfig = it) }
-            )
             MaterialTheme {
                 Surface {
+                    ServicemanMenuBar(onOpenNewTab = { mainComponent.newTabPage(newTabPageConfig = it) } )
                     Column {
                         TabPages(
                             tabPagesValue = mainComponent.tabPages,
@@ -68,26 +66,4 @@ fun main() {
             }
         }
     }
-}
-
-private fun <T> runOnUiThread(block: () -> T): T {
-    if (SwingUtilities.isEventDispatchThread()) {
-        return block()
-    }
-
-    var error: Throwable? = null
-    var result: T? = null
-
-    SwingUtilities.invokeAndWait {
-        try {
-            result = block()
-        } catch (e: Throwable) {
-            error = e
-        }
-    }
-
-    error?.also { throw it }
-
-    @Suppress("UNCHECKED_CAST")
-    return result as T
 }
